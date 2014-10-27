@@ -30,7 +30,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
         password_confirmation: "foobar"
       }
     end
-
+    assert is_logged_in?
     # assert_template ''
   end
 
