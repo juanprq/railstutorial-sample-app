@@ -32,6 +32,22 @@ module SessionsHelper
     end
   end
 
+  # Realiza una redirección a una url específica o si existe una url en sessión, se realiza la redirección a esta.
+  def redirect_back_or(default)
+    redirect_to(session[:forwarding_url] || default)
+    session.delete(:forwarding_url)
+  end
+
+  # Guarda la url del request para realizar posterior redirección.
+  def store_location
+    session[:forwarding_url] = request.url if request.get?
+  end
+
+  # Verifica que el usuario identificado sea el mismo que se envía por parámetro.
+  def current_user?(user)
+    user == current_user
+  end
+
   # Indica si hay alguien identificado en el sistema.
   def logged_in?
     !current_user.nil?

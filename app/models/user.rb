@@ -3,7 +3,7 @@ class User < ActiveRecord::Base
   attr_accessor :remember_token
 
   validates :name,  presence: true, length: { maximum: 50 }
-  validates :password, length: { minimum: 6 }
+  validates :password, length: { minimum: 6 }, allow_blank: true
   validates :email, presence: true, 
             uniqueness: { case_sensitive: false }
 
