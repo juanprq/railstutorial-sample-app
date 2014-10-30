@@ -6,12 +6,13 @@ class UsersController < ApplicationController
 
   # Carga y renderiza el listado de usuarios
   def index
-    @users = User.paginate(page: params[:page])
+    @users = User.where(activated: true).paginate(page: params[:page])
   end
 
   # Carga la pantalla de el usuario según el parámetro :id.
   def show
     @user = User.find params[:id]
+    redirect_to root_url and return unless @user.activated
   end
 
   # Prepara la pantalla para crear un nuevo usuario.
@@ -23,7 +24,8 @@ class UsersController < ApplicationController
   def create
     @user = User.new user_params
     if @user.save
-      log_in @user
+      @user.send_activation_mail
+      flash[:info] = 'Please check your email to activate your account.'
       redirect_to @user
     else
       render 'new'
