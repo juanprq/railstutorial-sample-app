@@ -3,6 +3,8 @@ class UsersController < ApplicationController
   before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: :destroy
+  before_action :load_user, only: [:show, :edit]
+  before_action :activated_user, only: :show
 
   # Carga y renderiza el listado de usuarios
   def index
@@ -11,8 +13,7 @@ class UsersController < ApplicationController
 
   # Carga la pantalla de el usuario según el parámetro :id.
   def show
-    @user = User.find params[:id]
-    redirect_to root_url and return unless @user.activated
+    @microposts = @user.microposts.paginate(page: params[:page])
   end
 
   # Prepara la pantalla para crear un nuevo usuario.
@@ -34,7 +35,6 @@ class UsersController < ApplicationController
 
   # Prepara la pantalla para actualizar la información de un usuario
   def edit
-    @user = User.find params[:id]
   end
 
   # Actualiza la información de un usuario.
@@ -65,20 +65,20 @@ class UsersController < ApplicationController
 
     #Before filters
     
-    def logged_in_user
-       unless logged_in?
-        store_location
-        flash[:danger] = 'Please log in.'
-        redirect_to login_url
-       end
-    end
-
     def correct_user
       redirect_to(root_url) unless params[:id].to_i == current_user.id
     end
 
     def admin_user
       redirect_to(root_url) unless current_user.admin?
+    end
+
+    def load_user
+      @user = User.find(params[:id])
+    end
+
+    def activated_user
+      redirect_to root_url and return unless @user.activated
     end
 
 end
